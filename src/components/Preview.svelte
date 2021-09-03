@@ -5,9 +5,6 @@
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D;
 
-    let x: number = $bannerWidth / 2;
-    let y: number = $bannerHeight / 2;
-
     function drawBackground() {
         if ($bannerBackground.startsWith("#")) {
             ctx.fillStyle = $bannerBackground
@@ -23,42 +20,45 @@
     }
 
     function drawText() {
+        ctx.textBaseline = "middle"
+        ctx.textAlign = "center"
+        ctx.font = "bold 40px Serif"
         ctx.fillStyle = "#FFFFFF"
-        ctx.fillText($userInput, x, y)
+        ctx.fillText($userInput, $bannerWidth / 2, $bannerHeight / 2)
+    }
+
+    function draw() {
+        canvas.width = $bannerWidth
+        canvas.height = $bannerHeight
+        drawBackground()
+        drawText()
     }
 
 
     onMount(() => {
         $previewCanvas = canvas
         ctx = canvas.getContext('2d')
-        ctx.textBaseline = "middle"
-        ctx.textAlign = "center"
-        ctx.font = "bold 40px Serif"
-
-        drawBackground()
-        drawText()
+        draw()
     })
 
     userInput.subscribe(value => {
-        if (ctx) {
-            drawBackground()
-            drawText()
-        }
+        ctx && draw()
     })
 
     bannerBackground.subscribe(value => {
-        if (ctx) {
-            drawBackground()
-        }
+        ctx && draw()
+    })
+
+    bannerWidth.subscribe(value => {
+        ctx && draw()
+    })
+
+    bannerHeight.subscribe(value => {
+        ctx && draw()
     })
 
 </script>
 
 <div class="container">
-    <canvas
-            bind:this={canvas}
-            class="text"
-            height={$bannerHeight}
-            width={$bannerWidth}
-    ></canvas>
+    <canvas bind:this={canvas}></canvas>
 </div>
